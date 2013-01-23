@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	                       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-lazy-init="false">
+	
+	
+	<!-- 定时拉影评服务 -->
+	<bean id="fechLookpointJob" class="com.sohu.spaces.lookpoint.job.FechLookpointJob" scope="singleton" init-method="init">
+		<property name="flushAssistantLookpoint" ref="flushAssistantLookpoint" />
+	</bean>
+	<bean id="fechLookpointJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="concurrent" value="false" />
+		<property name="targetObject" ref="fechLookpointJob" />
+		<property name="targetMethod" value="execute" />
+	</bean>
+	<bean id="fechLookpointJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="fechLookpointJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/3 * * ?</value>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="fechLookpointJobTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

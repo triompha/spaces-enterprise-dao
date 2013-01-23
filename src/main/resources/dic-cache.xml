@@ -1,0 +1,8 @@
+<ehcache>
+	<diskStore path="java.io.tmpdir" />
+	<defaultCache maxElementsInMemory="10000" eternal="true"
+		overflowToDisk="false" />
+
+	<cache name="serviceCache" maxElementsInMemory="1000000" eternal="false"
+		timeToLiveSeconds="43200" overflowToDisk="false" diskPersistent="false" />
+</ehcache>

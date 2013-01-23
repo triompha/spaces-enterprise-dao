@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
+           xmlns:tuscany="http://tuscany.apache.org/xmlns/sca/1.0"
+           targetNamespace="http://sample"
+           xmlns:sample="http://sample"
+           xmlns:scallop="http://scallop/xmlns/sca/1.0"
+           name="Enterprise">
+    
+    <component name="EnterpriseServiceComponent">
+		<implementation.spring location="context/applicationContext-server.xml"/>
+		<service name="enterpriseService">
+			<scallop:binding.rmi host="localhost" port="8811" serviceName="EnterpriseRMIService"/>
+		</service>
+	</component>
+	
+	<reference name="videoInfoService" promote="EnterpriseServiceComponent/videoInfoService">
+		<interface.java interface="com.sohu.spaces.videos.service.VideoInfoService" />
+		<scallop:binding.rmi registryName="spaces-video-service-rmi" serviceName="VideoInfoRMIService" />
+	</reference>	
+
+	<reference name="vrsTvSetService" promote="EnterpriseServiceComponent/vrsTvSetService">
+		<interface.java interface="com.sohu.spaces.vrs.service.VrsTvSetService" />
+		<scallop:binding.rmi registryName="spaces-vrs3-service-rmi" serviceName="VrsTvSetRMIService" />
+	</reference>
+
+	<reference name="vrsApplicationService" promote="EnterpriseServiceComponent/vrsApplicationService">
+		<interface.java interface="com.sohu.spaces.vrs.service.VrsApplicationService" />
+		<scallop:binding.rmi registryName="spaces-vrs3-service-rmi" serviceName="VrsApplicationRMIService" />
+	</reference>
+	
+	<reference name="accountService" promote="EnterpriseServiceComponent/accountService">
+		<interface.java interface="com.sohu.spaces.user.service.AccountService" />
+		<scallop:binding.rmi registryName="spaces-user-service-rmi" serviceName="AccountRMIService" />
+	</reference>	
+
+	
+</composite>

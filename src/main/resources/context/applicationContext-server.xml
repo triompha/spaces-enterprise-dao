@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+		$Id: applicationContext-server.xml 153125 2010-07-13 09:03:18Z
+		caiyingjie $
+	-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sca="http://www.springframework.org/schema/sca"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/sca http://www.springframework.org/schema/sca/spring-sca.xsd">
+	
+	   <!-- 加载配置文件 -->
+    <bean id="propertyConfigurerForProject"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="order" value="1" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="locations">
+            <list>
+                <value>classpath*:context/*.properties</value>
+            </list>
+        </property>
+    </bean>
+	
+	<context:component-scan base-package="com.sohu.spaces.enterprise" />
+	<import resource="classpath:context/applicationContext-aop.xml"/>
+    <import resource="classpath:context/applicationContext-dal.xml"/>
+    <import resource="classpath:context/applicationContext-soa.xml"/>
+    
+    <bean id="enterpriseService" class="com.sohu.spaces.enterprise.service.impl.EnterpriseServiceImpl">
+   		<property name="accountService" ref="accountService" />
+		<property name="videoInfoService" ref="videoInfoService" />
+		<property name="vrsApplicationService" ref="vrsApplicationService" />
+		<property name="vrsTvSetService" ref="vrsTvSetService" />
+		<property name="redisCache" ref="redisCache" />
+		<property name="baseDao" ref="baseDao" />
+    </bean>	
+
+</beans>

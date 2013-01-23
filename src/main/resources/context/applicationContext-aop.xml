@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sca="http://www.springframework.org/schema/sca"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+            http://www.springframework.org/schema/sca http://www.springframework.org/schema/sca/spring-sca.xsd">
+	
+	<!-- ############################################################## -->
+	<!--		################ EhCache 配置 ################	-->
+	<!-- ############################################################## -->
+	<bean id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:dic-cache.xml" />
+		<property name="shared" value="true" />
+	</bean>
+
+	<bean id="serviceCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="cacheName" value="serviceCache" />
+	</bean>
+
+	<bean id="serviceCacheUtil" class="com.sohu.spaces.web.aop.ServiceCacheUtil"
+		factory-method="getInstance">
+		<property name="cache" ref="serviceCache" />
+	</bean>
+
+	<bean id="serviceAdvisor" class="com.sohu.spaces.web.aop.ServiceAdvisor">
+		<property name="serviceCacheUtil" ref="serviceCacheUtil" />
+		<property name="methodNameRegexp" value="get.*" />
+		<property name="cacheNull" value="false" />
+	</bean>
+
+	<bean id="accountServiceWithCache" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<!--  代理对象所实现的接口-->
+		<property name="proxyInterfaces">
+			<value>com.sohu.spaces.user.service.AccountService</value>
+		</property>
+		<!--  设置目标对象-->
+		<property name="target" ref="accountService" />
+		<!--  代理对象所使用的拦截器-->
+		<property name="interceptorNames">
+			<list>
+				<value>serviceAdvisor</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- ############################################################## -->
+	<!--		################ Log performance ################	-->
+	<!-- ############################################################## -->
+	<bean id="aroundLoggingTime" class="com.sohu.blog.performance.AroundLoggingTime" />
+    <aop:aspectj-autoproxy />
+    <aop:config>
+        <aop:aspect ref="aroundLoggingTime">
+            <aop:pointcut id="Service" expression="execution(* com.sohu.spaces.*.service.*.*(..))" />
+            <aop:around pointcut-ref="Service" method="doAroundLoggingTime" />
+        </aop:aspect>
+    </aop:config>
+    <aop:config>
+        <aop:aspect ref="aroundLoggingTime">
+            <aop:pointcut id="DaoAop" expression="execution(* com.sohu.spaces.*.dao.*.*(..))" />
+            <aop:around pointcut-ref="DaoAop" method="doAroundLoggingTime" />
+        </aop:aspect>
+    </aop:config>    
+	
+	
+</beans>

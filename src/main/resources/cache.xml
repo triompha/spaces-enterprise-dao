@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cache>
+    <object name="com.sohu.spaces.entry.model.Entry" >
+        <list name="get_user_all_entry_list" sqlString="select entry_id from entry where user_id = ? and status!=-1" 
+              param="userId" returnType="org.hibernate.type.LongType" />
+        <list name="get_user_status_entry_list" sqlString="select entry_id from entry where status=? and user_id = ?"
+              param="status,userId" />
+    </object>
+</cache>

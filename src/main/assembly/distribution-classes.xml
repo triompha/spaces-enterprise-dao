@@ -1,0 +1,14 @@
+<assembly>
+	<id>classes</id>
+	<finalName>${artifactId}</finalName>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>target/classes</directory>
+			<outputDirectory>classes</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>
